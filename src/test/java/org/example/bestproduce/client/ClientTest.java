@@ -42,7 +42,7 @@ public class ClientTest {
 	@Test
 	public void testWhenApiServerReturnsGenericErrorClientReturnsNullResponse() throws IOException, IllegalAccessException, InstantiationException {
 		mockJsonApiClientGetToReturnStatus(500, mock(JsonResponse.class));
-		TestableClient client = new TestableClient(configurationService, jsonApiClient);
+		Client client = new Client(configurationService, jsonApiClient);
 
 		RateResponse rates = client.getRates(new RateRequest());
 
@@ -52,7 +52,7 @@ public class ClientTest {
 	@Test
 	public void testWhenApiServerReturnsUnauthorizedErrorClientReturnsWrongCredentialsResponse() throws IOException, IllegalAccessException, InstantiationException {
 		mockJsonApiClientGetToReturnStatus(403, mock(JsonResponse.class));
-		TestableClient client = new TestableClient(configurationService, jsonApiClient);
+		Client client = new Client(configurationService, jsonApiClient);
 
 		RateResponse rates = client.getRates(new RateRequest());
 
@@ -67,7 +67,7 @@ public class ClientTest {
 		when(jsonResponse.getBody(RateResponse.class)).thenReturn(rateResponse);
 		mockJsonApiClientGetToReturnStatus(200, jsonResponse);
 
-		TestableClient client = new TestableClient(configurationService, jsonApiClient);
+		Client client = new Client(configurationService, jsonApiClient);
 
 		RateResponse rates = client.getRates(new RateRequest());
 
@@ -80,7 +80,7 @@ public class ClientTest {
 				(URL) anyObject(),
 				anyString())).thenThrow(new IOException());
 
-		TestableClient client = new TestableClient(configurationService, jsonApiClient);
+		Client client = new Client(configurationService, jsonApiClient);
 
 		RateResponse rates = client.getRates(new RateRequest());
 
