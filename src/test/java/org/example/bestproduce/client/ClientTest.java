@@ -41,7 +41,7 @@ public class ClientTest {
 
 	@Test
 	public void testWhenApiServerReturnsGenericErrorClientReturnsNullResponse() throws IOException, IllegalAccessException, InstantiationException {
-		mockJsonApiClientGetToReturnStatus(500);
+		mockJsonApiClientGetToReturnStatus(500, mock(JsonResponse.class));
 		TestableClient client = new TestableClient(configurationService, jsonApiClient);
 
 		RateResponse rates = client.getRates(new RateRequest());
@@ -51,7 +51,7 @@ public class ClientTest {
 
 	@Test
 	public void testWhenApiServerReturnsUnauthorizedErrorClientReturnsWrongCredentialsResponse() throws IOException, IllegalAccessException, InstantiationException {
-		mockJsonApiClientGetToReturnStatus(403);
+		mockJsonApiClientGetToReturnStatus(403, mock(JsonResponse.class));
 		TestableClient client = new TestableClient(configurationService, jsonApiClient);
 
 		RateResponse rates = client.getRates(new RateRequest());
@@ -60,17 +60,12 @@ public class ClientTest {
 		assertThat(rates.getErrorMessage(), is("Wrong credentials"));
 	}
 
-	private void mockJsonApiClientGetToReturnStatus(int t) throws IOException {
-		JsonResponse jsonResponse = mock(JsonResponse.class);
-		when(jsonResponse.getStatus()).thenReturn(t);
-		when(jsonApiClient.get(
-				(URL) anyObject(),
-				anyString())).thenReturn(jsonResponse);
-	}
-
 	@Test
 	public void testWhenApiServerReturnsSuccessfulResponseClientReturnsRateResponse() throws IOException, IllegalAccessException, InstantiationException {
-		mockJsonApiClientGetToReturnStatus(200);
+		JsonResponse jsonResponse = mock(JsonResponse.class);
+		RateResponse rateResponse = successfulResponse();
+		when(jsonResponse.getBody(RateResponse.class)).thenReturn(rateResponse);
+		mockJsonApiClientGetToReturnStatus(200, jsonResponse);
 
 		TestableClient client = new TestableClient(configurationService, jsonApiClient);
 
@@ -81,35 +76,33 @@ public class ClientTest {
 
 	@Test
 	public void testWhenAnExceptionOccursRateResponseIsNull() throws IOException, IllegalAccessException, InstantiationException {
-		TestableClient client = new TestableClient(configurationService, JsonApiClient.getInstance());
-		client.setRaiseException(true);
+		when(jsonApiClient.get(
+				(URL) anyObject(),
+				anyString())).thenThrow(new IOException());
+
+		TestableClient client = new TestableClient(configurationService, jsonApiClient);
 
 		RateResponse rates = client.getRates(new RateRequest());
 
 		assertThat(rates, is(nullValue()));
 	}
 
+	private void mockJsonApiClientGetToReturnStatus(int status, JsonResponse jsonResponse) throws IOException {
+		when(jsonResponse.getStatus()).thenReturn(status);
+		when(jsonApiClient.get(
+				(URL) anyObject(),
+				anyString())).thenReturn(jsonResponse);
+	}
+
+	private RateResponse successfulResponse() {
+		RateResponse rateResponse = new RateResponse();
+		rateResponse.setAckValue(RateResponse.OK);
+		return rateResponse;
+	}
+
 	class TestableClient extends Client {
-
-		private int status;
-		private boolean raiseException = false;
-
-		TestableClient() {
-		}
-
 		TestableClient(ConfigurationService configurationService, JsonApiClient jsonApiClient) {
 			super(configurationService, jsonApiClient);
-		}
-
-		@Override
-		protected RateResponse getBody(JsonResponse jsonResponse) throws IllegalAccessException, InstantiationException, IOException {
-			RateResponse rateResponse = new RateResponse();
-			rateResponse.setAckValue(RateResponse.OK);
-			return rateResponse;
-		}
-
-		public void setRaiseException(boolean raiseException) {
-			this.raiseException = raiseException;
 		}
 	}
 }
