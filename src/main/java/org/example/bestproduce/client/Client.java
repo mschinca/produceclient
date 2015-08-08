@@ -11,6 +11,16 @@ import java.io.IOException;
 import java.net.URL;
 
 public class Client {
+	private ConfigurationService configurationService;
+
+	public Client() {
+		configurationService = new ConfigurationService();
+	}
+
+	public Client(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
+	}
+
 	public RateResponse getRates(RateRequest request) throws IllegalAccessException, IOException, InstantiationException {
 		RateResponse response = null;
 
@@ -25,7 +35,7 @@ public class Client {
 			URL url = builder.build().toURL();
 
 			JsonApiClient jsonApiClient = JsonApiClient.getInstance();
-			JsonResponse jsonResponse = jsonApiClient.get(url, getApiToken());
+			JsonResponse jsonResponse = jsonApiClient.get(url, configurationService.apiToken());
 
 			int status = getStatus(jsonResponse);
 
@@ -51,10 +61,6 @@ public class Client {
 
 	protected int getStatus(JsonResponse jsonResponse) throws Exception {
 		return jsonResponse.getStatus();
-	}
-
-	protected String getApiToken() throws IOException, InstantiationException, IllegalAccessException {
-		return ConfigurationService.getApiToken();
 	}
 
 	protected String getPricesApiEndpoint() throws IllegalAccessException, IOException, InstantiationException {

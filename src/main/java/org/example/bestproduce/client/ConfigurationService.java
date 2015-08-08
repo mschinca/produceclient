@@ -22,4 +22,8 @@ public class ConfigurationService {
 		JsonResponse jsonResponse = jsonClient.get(new URL(CONFIGURATION_SERVICE_PATH + TOKEN_ENDPOINT), "configuration-token");
 		return jsonResponse.getBody(Token.class).getValue();
 	}
+
+	public String apiToken() throws IllegalAccessException, IOException, InstantiationException {
+		return ConfigurationService.getApiToken();
+	}
 }

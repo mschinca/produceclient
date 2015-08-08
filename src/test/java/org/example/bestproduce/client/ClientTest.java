@@ -1,17 +1,20 @@
 package org.example.bestproduce.client;
 
 import org.example.bestproduce.jsonclient.JsonResponse;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ClientTest {
+	private ConfigurationService configurationService;
 
 	@Test
 	@Ignore
@@ -23,9 +26,15 @@ public class ClientTest {
 		assertThat(rates.getAckValue(), is(RateResponse.OK));
 	}
 
+	@Before
+	public void setUpMocks() throws IllegalAccessException, IOException, InstantiationException {
+		configurationService = mock(ConfigurationService.class);
+		when(configurationService.apiToken()).thenReturn("api-token");
+	}
+
 	@Test
 	public void testWhenApiServerReturnsGenericErrorClientReturnsNullResponse() throws IOException, IllegalAccessException, InstantiationException {
-		TestableClient client = new TestableClient();
+		TestableClient client = new TestableClient(configurationService);
 		client.setStatus(500);
 
 		RateResponse rates = client.getRates(new RateRequest());
@@ -35,7 +44,7 @@ public class ClientTest {
 
 	@Test
 	public void testWhenApiServerReturnsUnauthorizedErrorClientReturnsWrongCredentialsResponse() throws IOException, IllegalAccessException, InstantiationException {
-		TestableClient client = new TestableClient();
+		TestableClient client = new TestableClient(configurationService);
 		client.setStatus(403);
 
 		RateResponse rates = client.getRates(new RateRequest());
@@ -46,7 +55,7 @@ public class ClientTest {
 
 	@Test
 	public void testWhenApiServerReturnsSuccessfulResponseClientReturnsRateResponse() throws IOException, IllegalAccessException, InstantiationException {
-		TestableClient client = new TestableClient();
+		TestableClient client = new TestableClient(configurationService);
 		client.setStatus(200);
 
 		RateResponse rates = client.getRates(new RateRequest());
@@ -56,7 +65,7 @@ public class ClientTest {
 
 	@Test
 	public void testWhenAnExceptionOccursRateResponseIsNull() throws IOException, IllegalAccessException, InstantiationException {
-		TestableClient client = new TestableClient();
+		TestableClient client = new TestableClient(configurationService);
 		client.setRaiseException(true);
 
 		RateResponse rates = client.getRates(new RateRequest());
@@ -69,14 +78,16 @@ public class ClientTest {
 		private int status;
 		private boolean raiseException = false;
 
-		@Override
-		protected String getPricesApiEndpoint() throws IllegalAccessException, IOException, InstantiationException {
-			return "prices-api-endpoint";
+		TestableClient() {
+		}
+
+		TestableClient(ConfigurationService configurationService) {
+			super(configurationService);
 		}
 
 		@Override
-		protected String getApiToken() throws IOException, InstantiationException, IllegalAccessException {
-			return "api-token";
+		protected String getPricesApiEndpoint() throws IllegalAccessException, IOException, InstantiationException {
+			return "prices-api-endpoint";
 		}
 
 		@Override
