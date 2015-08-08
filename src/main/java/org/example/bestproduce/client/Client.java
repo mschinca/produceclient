@@ -26,7 +26,7 @@ public class Client {
 
 		URIBuilder builder = new URIBuilder().
 				setScheme("http").
-				setHost(getPricesApiEndpoint()).
+				setHost(configurationService.pricesApiEndPoint()).
 				setPath("/prices").
 				setParameter("productType", request.getProductType()).setParameter("quantity", request.getQuantity()).
 				setParameter("dateTime", getCurrentUtcTimeISO8601());
@@ -61,10 +61,6 @@ public class Client {
 
 	protected int getStatus(JsonResponse jsonResponse) throws Exception {
 		return jsonResponse.getStatus();
-	}
-
-	protected String getPricesApiEndpoint() throws IllegalAccessException, IOException, InstantiationException {
-		return ConfigurationService.getPricesApiEndpoint();
 	}
 
 	private RateResponse wrongCredentialsResponse() {

@@ -26,4 +26,8 @@ public class ConfigurationService {
 	public String apiToken() throws IllegalAccessException, IOException, InstantiationException {
 		return ConfigurationService.getApiToken();
 	}
+
+	public String pricesApiEndPoint() throws IllegalAccessException, IOException, InstantiationException {
+		return ConfigurationService.getPricesApiEndpoint();
+	}
 }

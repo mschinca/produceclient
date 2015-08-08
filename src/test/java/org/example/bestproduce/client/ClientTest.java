@@ -30,6 +30,7 @@ public class ClientTest {
 	public void setUpMocks() throws IllegalAccessException, IOException, InstantiationException {
 		configurationService = mock(ConfigurationService.class);
 		when(configurationService.apiToken()).thenReturn("api-token");
+		when(configurationService.pricesApiEndPoint()).thenReturn("api-token");
 	}
 
 	@Test
@@ -83,11 +84,6 @@ public class ClientTest {
 
 		TestableClient(ConfigurationService configurationService) {
 			super(configurationService);
-		}
-
-		@Override
-		protected String getPricesApiEndpoint() throws IllegalAccessException, IOException, InstantiationException {
-			return "prices-api-endpoint";
 		}
 
 		@Override
