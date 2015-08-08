@@ -29,4 +29,11 @@ public class ClientTest {
 
 		assertThat(rates.getAckValue(), is(RateResponse.OK));
 	}
+
+	class TestableClient extends Client {
+		@Override
+		protected String getPricesApiEndpoint() throws IllegalAccessException, IOException, InstantiationException {
+			return "prices-api-endpoint";
+		}
+	}
 }
