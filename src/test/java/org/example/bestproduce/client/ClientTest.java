@@ -25,14 +25,29 @@ public class ClientTest {
 
 	@Test
 	public void testWhenApiServerReturnsGenericErrorClientReturnsNullResponse() throws IOException, IllegalAccessException, InstantiationException {
-		Client client = new TestableClient();
+		TestableClient client = new TestableClient();
+		client.setStatus(500);
 
 		RateResponse rates = client.getRates(new RateRequest());
 
 		assertThat(rates, is(nullValue()));
 	}
 
+	@Test
+	public void testWhenApiServerReturnsUnauthorizedErrorClientReturnsWrongCredentialsResponse() throws IOException, IllegalAccessException, InstantiationException {
+		TestableClient client = new TestableClient();
+		client.setStatus(403);
+
+		RateResponse rates = client.getRates(new RateRequest());
+
+		assertThat(rates.getAckValue(), is(RateResponse.FAILURE));
+		assertThat(rates.getErrorMessage(), is("Wrong credentials"));
+	}
+
 	class TestableClient extends Client {
+
+		private int status;
+
 		@Override
 		protected String getPricesApiEndpoint() throws IllegalAccessException, IOException, InstantiationException {
 			return "prices-api-endpoint";
@@ -45,7 +60,11 @@ public class ClientTest {
 
 		@Override
 		protected int getStatus(JsonResponse jsonResponse) throws IOException {
-			return 500;
+			return status;
+		}
+
+		public void setStatus(int status) {
+			this.status = status;
 		}
 	}
 }
