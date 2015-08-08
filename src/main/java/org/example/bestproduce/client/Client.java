@@ -27,7 +27,7 @@ public class Client {
 			JsonApiClient jsonApiClient = JsonApiClient.getInstance();
 			JsonResponse jsonResponse = jsonApiClient.get(url, getApiToken());
 
-			int status = jsonResponse.getStatus();
+			int status = getStatus(jsonResponse);
 
 			if (status == 200) {
 				response = jsonResponse.getBody(RateResponse.class);
@@ -43,6 +43,10 @@ public class Client {
 		}
 
 		return response;
+	}
+
+	protected int getStatus(JsonResponse jsonResponse) throws IOException {
+		return jsonResponse.getStatus();
 	}
 
 	protected String getApiToken() throws IOException, InstantiationException, IllegalAccessException {

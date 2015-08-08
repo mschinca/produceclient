@@ -1,5 +1,6 @@
 package org.example.bestproduce.client;
 
+import org.example.bestproduce.jsonclient.JsonResponse;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -39,6 +40,11 @@ public class ClientTest {
 		@Override
 		protected String getApiToken() throws IOException, InstantiationException, IllegalAccessException {
 			return "api-token";
+		}
+
+		@Override
+		protected int getStatus(JsonResponse jsonResponse) throws IOException {
+			return 500;
 		}
 	}
 }
