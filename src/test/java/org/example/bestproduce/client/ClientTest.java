@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class ClientTest {
@@ -23,12 +24,12 @@ public class ClientTest {
 	}
 
 	@Test
-	public void testClient() throws IOException, IllegalAccessException, InstantiationException {
+	public void testWhenApiServerReturnsGenericErrorClientReturnsNullResponse() throws IOException, IllegalAccessException, InstantiationException {
 		Client client = new TestableClient();
 
 		RateResponse rates = client.getRates(new RateRequest());
 
-		assertThat(rates.getAckValue(), is(RateResponse.OK));
+		assertThat(rates, is(nullValue()));
 	}
 
 	class TestableClient extends Client {
