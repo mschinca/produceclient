@@ -25,7 +25,7 @@ public class Client {
 			URL url = builder.build().toURL();
 
 			JsonApiClient jsonApiClient = JsonApiClient.getInstance();
-			JsonResponse jsonResponse = jsonApiClient.get(url, ConfigurationService.getApiToken());
+			JsonResponse jsonResponse = jsonApiClient.get(url, getApiToken());
 
 			int status = jsonResponse.getStatus();
 
@@ -43,6 +43,10 @@ public class Client {
 		}
 
 		return response;
+	}
+
+	protected String getApiToken() throws IOException, InstantiationException, IllegalAccessException {
+		return ConfigurationService.getApiToken();
 	}
 
 	protected String getPricesApiEndpoint() throws IllegalAccessException, IOException, InstantiationException {

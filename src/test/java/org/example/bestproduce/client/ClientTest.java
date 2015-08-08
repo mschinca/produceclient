@@ -23,7 +23,7 @@ public class ClientTest {
 
 	@Test
 	public void testClient() throws IOException, IllegalAccessException, InstantiationException {
-		Client client = new Client();
+		Client client = new TestableClient();
 
 		RateResponse rates = client.getRates(new RateRequest());
 
@@ -34,6 +34,11 @@ public class ClientTest {
 		@Override
 		protected String getPricesApiEndpoint() throws IllegalAccessException, IOException, InstantiationException {
 			return "prices-api-endpoint";
+		}
+
+		@Override
+		protected String getApiToken() throws IOException, InstantiationException, IllegalAccessException {
+			return "api-token";
 		}
 	}
 }
