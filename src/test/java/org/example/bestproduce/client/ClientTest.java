@@ -13,6 +13,15 @@ public class ClientTest {
 
 	@Test
 	@Ignore
+	public void testClientEndToEnd() throws IOException, IllegalAccessException, InstantiationException {
+		Client client = new Client();
+
+		RateResponse rates = client.getRates(new RateRequest());
+
+		assertThat(rates.getAckValue(), is(RateResponse.OK));
+	}
+
+	@Test
 	public void testClient() throws IOException, IllegalAccessException, InstantiationException {
 		Client client = new Client();
 
