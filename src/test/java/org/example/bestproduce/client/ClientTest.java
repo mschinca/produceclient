@@ -54,9 +54,20 @@ public class ClientTest {
 		assertThat(rates.getAckValue(), is(RateResponse.OK));
 	}
 
+	@Test
+	public void testWhenAnExceptionOccursRateResponseIsNull() throws IOException, IllegalAccessException, InstantiationException {
+		TestableClient client = new TestableClient();
+		client.setRaiseException(true);
+
+		RateResponse rates = client.getRates(new RateRequest());
+
+		assertThat(rates, is(nullValue()));
+	}
+
 	class TestableClient extends Client {
 
 		private int status;
+		private boolean raiseException = false;
 
 		@Override
 		protected String getPricesApiEndpoint() throws IllegalAccessException, IOException, InstantiationException {
@@ -69,8 +80,13 @@ public class ClientTest {
 		}
 
 		@Override
-		protected int getStatus(JsonResponse jsonResponse) throws IOException {
-			return status;
+		protected int getStatus(JsonResponse jsonResponse) throws Exception {
+			if (raiseException) {
+				throw new Exception("Hardcoded exception");
+			}
+			else {
+				return status;
+			}
 		}
 
 		public void setStatus(int status) {
@@ -82,6 +98,10 @@ public class ClientTest {
 			RateResponse rateResponse = new RateResponse();
 			rateResponse.setAckValue(RateResponse.OK);
 			return rateResponse;
+		}
+
+		public void setRaiseException(boolean raiseException) {
+			this.raiseException = raiseException;
 		}
 	}
 }

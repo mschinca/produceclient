@@ -49,7 +49,7 @@ public class Client {
 		return jsonResponse.getBody(RateResponse.class);
 	}
 
-	protected int getStatus(JsonResponse jsonResponse) throws IOException {
+	protected int getStatus(JsonResponse jsonResponse) throws Exception {
 		return jsonResponse.getStatus();
 	}
 
