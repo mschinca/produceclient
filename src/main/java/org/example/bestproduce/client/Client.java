@@ -30,7 +30,7 @@ public class Client {
 			int status = getStatus(jsonResponse);
 
 			if (status == 200) {
-				response = jsonResponse.getBody(RateResponse.class);
+				response = getBody(jsonResponse);
 			} else if (status == 403) {
 				return wrongCredentialsResponse();
 			} else {
@@ -43,6 +43,10 @@ public class Client {
 		}
 
 		return response;
+	}
+
+	protected RateResponse getBody(JsonResponse jsonResponse) throws IllegalAccessException, InstantiationException, IOException {
+		return jsonResponse.getBody(RateResponse.class);
 	}
 
 	protected int getStatus(JsonResponse jsonResponse) throws IOException {

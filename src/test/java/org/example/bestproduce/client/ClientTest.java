@@ -44,6 +44,16 @@ public class ClientTest {
 		assertThat(rates.getErrorMessage(), is("Wrong credentials"));
 	}
 
+	@Test
+	public void testWhenApiServerReturnsSuccessfulResponseClientReturnsRateResponse() throws IOException, IllegalAccessException, InstantiationException {
+		TestableClient client = new TestableClient();
+		client.setStatus(200);
+
+		RateResponse rates = client.getRates(new RateRequest());
+
+		assertThat(rates.getAckValue(), is(RateResponse.OK));
+	}
+
 	class TestableClient extends Client {
 
 		private int status;
@@ -65,6 +75,13 @@ public class ClientTest {
 
 		public void setStatus(int status) {
 			this.status = status;
+		}
+
+		@Override
+		protected RateResponse getBody(JsonResponse jsonResponse) throws IllegalAccessException, InstantiationException, IOException {
+			RateResponse rateResponse = new RateResponse();
+			rateResponse.setAckValue(RateResponse.OK);
+			return rateResponse;
 		}
 	}
 }
