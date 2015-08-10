@@ -99,10 +99,4 @@ public class ClientTest {
 		rateResponse.setAckValue(RateResponse.OK);
 		return rateResponse;
 	}
-
-	class TestableClient extends Client {
-		TestableClient(ConfigurationService configurationService, JsonApiClient jsonApiClient) {
-			super(configurationService, jsonApiClient);
-		}
-	}
 }
